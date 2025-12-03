@@ -1,12 +1,12 @@
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/slices/authSlice';
+import { register } from '../redux/slices/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginSchema } from '../utils/validators';
+import { registerSchema } from '../utils/validators';
 import toast from 'react-hot-toast';
 
-const Login = () => {
+const Register = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useSelector((state) => state.auth);
@@ -16,23 +16,30 @@ const Login = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-    resolver: joiResolver(loginSchema),
+    resolver: joiResolver(registerSchema),
   });
 
   const onSubmit = async (data) => {
     try {
-      await dispatch(login(data)).unwrap();
-      toast.success('¡Bienvenido de nuevo!');
-      navigate('/dashboard');
-    } catch (err) {
-      toast.error('Email o contraseña incorrectos');
-    }
+    await dispatch(register(data)).unwrap();
+    toast.success('¡Cuenta creada con éxito! Bienvenido/a');  
+    navigate('/dashboard');
+  } catch (err) {
+    toast.error(err || 'Error al crear la cuenta');  
+  }
   };
 
   return (
     <div className="form-container">
-      <h2>Iniciar sesión</h2>
+      <h2>Crear cuenta</h2>
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <input
+          type="text"
+          placeholder="Nombre completo"
+          {...register('name')}
+        />
+        {errors.name && <p className="error">{errors.name.message}</p>}
+
         <input
           type="email"
           placeholder="Email"
@@ -42,7 +49,7 @@ const Login = () => {
 
         <input
           type="password"
-          placeholder="Contraseña"
+          placeholder="Contraseña (mín. 6 caracteres)"
           {...register('password')}
         />
         {errors.password && <p className="error">{errors.password.message}</p>}
@@ -50,15 +57,15 @@ const Login = () => {
         {error && <p className="error" style={{ textAlign: 'center', fontWeight: 'bold' }}>{error}</p>}
 
         <button type="submit" className="primary" disabled={isLoading}>
-          {isLoading ? 'Entrando...' : 'Ingresar'}
+          {isLoading ? 'Creando cuenta...' : 'Registrarme'}
         </button>
       </form>
 
       <p style={{ textAlign: 'center', marginTop: '1.5rem', color: '#636e72' }}>
-        ¿No tenés cuenta? <Link to="/register" style={{ color: '#00cec9', fontWeight: '600' }}>Registrate acá</Link>
+        ¿Ya tenés cuenta? <Link to="/login" style={{ color: '#00cec9', fontWeight: '600' }}>Iniciar sesión</Link>
       </p>
     </div>
   );
 };
 
-export default Login;
+export default Register;

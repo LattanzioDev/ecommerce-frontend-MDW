@@ -13,20 +13,33 @@ const Header = () => {
   };
 
   return (
-    <header style={{ display: 'flex', justifyContent: 'space-between', padding: '1rem', background: '#f0f0f0' }}>
-      <Link to="/">Home</Link>
-      {user ? (
-        <>
-          <span>Bienvenido, {user.name}</span>
-          <Link to="/dashboard">Dashboard</Link>
-          <button onClick={handleLogout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/login">Login</Link>
-          <Link to="/register">Register</Link>
-        </>
-      )}
+    <header>
+      <nav>
+        {/* Logo */}
+        <Link to="/" className="logo">
+          E-Shop
+        </Link>
+
+        {/* Enlaces */}
+        <div className="nav-links">
+          <Link to="/">Inicio</Link>
+
+          {user ? (
+            <>
+              <Link to="/dashboard">Panel</Link>
+              <span style={{ marginLeft: '1rem', fontWeight: '500' }}>
+                Hola, {user.name.split(' ')[0]}!
+              </span>
+              <button onClick={handleLogout}>Salir</button>
+            </>
+          ) : (
+            <>
+              <Link to="/login">Ingresar</Link>
+              <Link to="/register">Registrarse</Link>
+            </>
+          )}
+        </div>
+      </nav>
     </header>
   );
 };

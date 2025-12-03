@@ -1,16 +1,31 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginUser, registerUser } from '../../services/authService';
 
-// Thunks para async
-export const login = createAsyncThunk('auth/login', async (credentials) => {
-  const response = await loginUser(credentials);
-  return response.data; // { user, token }
-});
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await loginUser(credentials);
+      return response.data; 
+    } catch (err) {
+      const message = err.response?.data?.message || 'Error al iniciar sesión';
+      return rejectWithValue(message);
+    }
+  }
+);
 
-export const register = createAsyncThunk('auth/register', async (userData) => {
-  const response = await registerUser(userData);
-  return response.data;
-});
+export const register = createAsyncThunk(
+  'auth/register',
+  async (userData, { rejectWithValue }) => {
+    try {
+      const response = await registerUser(userData);
+      return response.data;
+    } catch (err) {
+      const message = err.response?.data?.message || 'Error al crear cuenta';
+      return rejectWithValue(message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
@@ -26,11 +41,17 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.removeItem('token');
     },
-    clearError: (state) => { state.error = null; },
+    clearError: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => { state.isLoading = true; })
+      // LOGIN
+      .addCase(login.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(login.fulfilled, (state, action) => {
         state.isLoading = false;
         state.user = action.payload.user;
@@ -39,13 +60,22 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.isLoading = false;
-        state.error = action.error.message;
+        state.error = action.payload;
       })
-      // Similar para register...
+      // REGISTER
+      .addCase(register.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
       .addCase(register.fulfilled, (state, action) => {
+        state.isLoading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
         localStorage.setItem('token', action.payload.token);
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload;
       });
   },
 });
