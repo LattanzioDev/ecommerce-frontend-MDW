@@ -2,10 +2,9 @@ import axios from 'axios';
 
 const api = axios.create({
   baseURL: 'https://ecommerce-api-mdw.onrender.com/api',
-  timeout: 30000, // 30 segundos de espera (Render puede tardar)
+  timeout: 30000, 
 });
 
-// Retry automático en caso de Network Error (solo la primera vez)
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
