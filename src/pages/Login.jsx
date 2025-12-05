@@ -12,20 +12,20 @@ const Login = () => {
   const { isLoading, error } = useSelector((state) => state.auth);
 
   const {
-    register,
-    handleSubmit,
-    formState: { errors },
+      register,
+      handleSubmit,
+      formState: { errors },
   } = useForm({
-    resolver: joiResolver(loginSchema),
+      resolver: joiResolver(loginSchema),
   });
 
   const onSubmit = async (data) => {
     try {
-      await dispatch(login(data)).unwrap();
-      toast.success('¡Bienvenido de nuevo!');
-      navigate('/dashboard');
+        await dispatch(login(data)).unwrap();
+        toast.success('¡Bienvenido de nuevo!');
+        navigate('/dashboard');
     } catch (err) {
-      toast.error('Email o contraseña incorrectos');
+        toast.error('Email o contraseña incorrectos');
     }
   };
 
