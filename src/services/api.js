@@ -3,11 +3,9 @@ import axios from 'axios';
 const api = axios.create({
     baseURL: 'https://ecommerce-backend-mdw.vercel.app/api',
     timeout: 30000,
-    withCredentials: true, // ← permite enviar cookies HTTP-only
+    withCredentials: true,
 });
 
-// Quitar Authorization porque tu backend NO usa Bearer tokens
-// Safari bloquea cookies cuando mezclas tokens + cookies en cross-site
 api.interceptors.request.use((config) => {
     // No enviar Authorization → Solo usar cookies HttpOnly
     return config;
