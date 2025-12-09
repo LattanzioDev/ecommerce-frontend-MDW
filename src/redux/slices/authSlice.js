@@ -1,117 +1,73 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginUser, registerUser, fetchCurrentUser} from '../../services/authService';
+// src/redux/authSlice.js
+import { createSlice } from "@reduxjs/toolkit";
+import { loginUser, registerUser, logoutUser, getUser } from "../thunks/authThunks.js";
 
-export const login = createAsyncThunk(
-  'auth/login',
-  async (credentials, { rejectWithValue }) => {
-    try {
-      const response = await loginUser(credentials);
-      return response.data;
-    } catch (err) {
-      const message = err.response?.data?.message || 'Error al iniciar sesión';
-      return rejectWithValue(message);
-    }
-  }
-);
-
-export const register = createAsyncThunk(
-  'auth/register',
-  async (userData, { rejectWithValue }) => {
-    try {
-      const response = await registerUser(userData);
-      return response.data;
-    } catch (err) {
-      const message = err.response?.data?.message || 'Error al crear cuenta';
-      return rejectWithValue(message);
-    }
-  }
-);
-
-export const getMe = createAsyncThunk(
-    "auth/getMe",
-    async (_, { rejectWithValue }) => {
-        try {
-            const res = await fetchCurrentUser();
-            return res.data.user;
-        } catch (err) {
-            return rejectWithValue(null);
-        }
-    }
-);
+const initialState = {
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    successRegister: false,
+    error: null,
+};
 
 const authSlice = createSlice({
-    name: 'auth',
-    initialState: {
-        user: null,
-//        token: localStorage.getItem('accessToken') || null,
-        isLoading: false,
-        error: null,
-        initialized: false,
-    },
-    reducers: {
-        logout: (state) => {
-            state.user = null;
-            state.token = null;
-            localStorage.removeItem('token');
-        },
-        clearError: (state) => {
-            state.error = null;
-        },
-    },
-
+    name: "auth",
+    initialState,
+    reducers: {}, // no necesitamos reducers manuales ahora
     extraReducers: (builder) => {
         builder
+
             // LOGIN
-            .addCase(login.pending, (state) => {
-                state.isLoading = true;
+            .addCase(loginUser.pending, (state) => {
+                state.loading = true;
                 state.error = null;
             })
-            .addCase(login.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
+            .addCase(loginUser.fulfilled, (state) => {
+                state.loading = false;
+                state.isAuthenticated = true;
             })
-            .addCase(login.rejected, (state, action) => {
-                state.isLoading = false;
+            .addCase(loginUser.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload;
+                state.isAuthenticated = false;
+            })
+
+            // OBTENER USER (si cookie válida)
+            .addCase(getUser.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getUser.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+                state.isAuthenticated = true;
+            })
+            .addCase(getUser.rejected, (state) => {
+                state.loading = false;
+                state.user = null;
+                state.isAuthenticated = false;
+            })
+
+            // LOGOUT
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.user = null;
+                state.isAuthenticated = false;
             })
 
             // REGISTER
-            .addCase(register.pending, (state) => {
-                state.isLoading = true;
+            .addCase(registerUser.pending, (state) => {
+                state.loading = true;
                 state.error = null;
             })
-            .addCase(register.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.user = action.payload.user;
-                state.token = action.payload.token;
-                //localStorage.setItem('token', action.payload.token);
+            .addCase(registerUser.fulfilled, (state) => {
+                state.loading = false;
+                state.successRegister = true;
             })
-            .addCase(register.rejected, (state, action) => {
-                state.isLoading = false;
+            .addCase(registerUser.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload;
+                state.successRegister = false;
             })
-
-            // GET ME
-            .addCase(getMe.pending, (state) => {
-                state.isLoading = true;
-                state.error = null;
-            })
-            .addCase(getMe.fulfilled, (state, action) => {
-                state.isLoading = false;
-                state.user = action.payload.user; // viene user directo
-            })
-            .addCase(getMe.rejected, (state, action) => {
-                state.isLoading = false;
-                state.error = action.payload;
-
-                // si falla el ME, se borra sesión
-                state.user = null;
-                state.token = null;
-                localStorage.removeItem('token');
-            });
     },
 });
 
-export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;

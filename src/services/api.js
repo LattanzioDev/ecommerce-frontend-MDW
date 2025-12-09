@@ -1,26 +1,10 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'https://ecommerce-backend-mdw.vercel.app/api',
+    baseURL: 'http://localhost:3000/api', //baseURL: 'https://ecommerce-backend-mdw.vercel.app/api',
     timeout: 30000,
     withCredentials: true,
+    headers: { "Content-Type": "application/json" }
 });
-
-api.interceptors.request.use((config) => {
-    // No enviar Authorization → Solo usar cookies HttpOnly
-    return config;
-});
-
-api.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
-            console.log('Backend durmiendo en Render... reintentando en 3 segundos');
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            return api(error.config);
-        }
-        return Promise.reject(error);
-    }
-);
 
 export default api;

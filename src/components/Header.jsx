@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
-import { logout } from '../redux/slices/authSlice';
+import {logoutUser} from "../redux/thunks/authThunks.js";
 
 const Header = () => {
     const { user } = useSelector((state) => state.auth);
@@ -8,7 +8,7 @@ const Header = () => {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        dispatch(logout());
+        dispatch(logoutUser());
         navigate('/');
     };
 
@@ -23,7 +23,7 @@ const Header = () => {
 
                     {user ? (
                         <>
-                            <span className="user-greeting">Hola, {user.name.split(' ')[0]}!</span>
+                            <span className="user-greeting">Hola, {user.user.name.split(' ')[0]}!</span>
                             <button onClick={handleLogout} className="btn-logout">Salir</button>
                         </>
                     ) : (

@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { useDispatch, useSelector } from 'react-redux';
-import { register } from '../redux/slices/authSlice';
+import {registerUser} from "../redux/thunks/authThunks.js";
 import { useNavigate, Link } from 'react-router-dom';
 import { registerSchema } from '../utils/validators';
 import toast from 'react-hot-toast';
@@ -21,7 +21,7 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-    await dispatch(register(data)).unwrap();
+    await dispatch(registerUser(data)).unwrap();
     toast.success('¡Cuenta creada con éxito! Bienvenido/a');  
     navigate('/dashboard');
   } catch (err) {

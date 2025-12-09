@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../redux/slices/authSlice';
+import {getUser, loginUser} from "../redux/thunks/authThunks.js";
 import { useNavigate, Link } from 'react-router-dom';
 import { loginSchema } from '../utils/validators';
 import toast from 'react-hot-toast';
@@ -19,17 +19,20 @@ const Login = () => {
       resolver: joiResolver(loginSchema),
   });
 
-  const onSubmit = async (data) => {
+const onSubmit = async (data) => {
     try {
-        await dispatch(login(data)).unwrap();
+        await dispatch(loginUser(data)).unwrap();
+
+        await dispatch(getUser()).unwrap();
+
         toast.success('¡Bienvenido de nuevo!');
         navigate('/dashboard');
     } catch (err) {
-        toast.error('Email o contraseña incorrectos');
+        toast.error(err || 'Email o contraseña incorrectos');
     }
-  };
+};
 
-  return (
+    return (
     <div className="form-container">
       <h2>Iniciar sesión</h2>
       <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
