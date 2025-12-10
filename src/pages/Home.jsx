@@ -1,7 +1,7 @@
-// src/pages/Home.jsx → PÁGINA INICIO TIPO MERCADO LIBRE / AMAZON
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../redux/slices/productsSlice';
+import { addToCart } from '../redux/slices/cartSlice'; //
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -25,7 +25,7 @@ const Home = () => {
             ) : (
                 <div className="products-grid">
                     {products.map((product) => (
-                        <div key={product._id} className="product-card-home">
+                        <div key={product._id} className="product-card-home" style={{ position: 'relative'}}>
                             {product.image ? (
                                 <img src={product.image} alt={product.name} />
                             ) : (
@@ -36,6 +36,13 @@ const Home = () => {
                                 <p className="price">${parseFloat(product.price).toFixed(2)}</p>
                                 <p className="description">{product.description}</p>
                             </div>
+
+                            <button
+                                onClick={() => dispatch(addToCart(product))}
+                                className="btn-add-to-cart"
+                            >
+                                Agregar al carrito
+                            </button>
                         </div>
                     ))}
                 </div>

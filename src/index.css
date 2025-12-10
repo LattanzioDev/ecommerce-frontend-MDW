@@ -315,11 +315,11 @@ main {
     gap: 1rem;
     padding: 1rem;
   }
-  
+
   .nav-links {
     gap: 1.5rem;
   }
-  
+
   .logo {
     font-size: 1.8rem;
   }
@@ -640,7 +640,7 @@ main {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* HOME — Vitrina pública tipo Mercado Libre */
+/* HOME */
 .home-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -699,5 +699,167 @@ main {
 }
 
 .home-container h1 {
-    margin-top: 4.5rem !important;   /* ← Esto lo baja exactamente lo que querés */
+    margin-top: 4.5rem !important;
 }
+
+.btn-add-to-cart {
+    position: absolute !important;
+    bottom: 15px;
+    right: 15px;
+    background: #00cec9 !important;
+    color: white !important;
+    padding: 0.8rem 1.2rem !important;
+    border: none !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    box-shadow: 0 4px 15px rgba(0, 206, 201, 0.4) !important;
+    transition: all 0.3s !important; z-index: 10; }
+
+
+/* ====== CARRITO ====== */
+
+.cart-container {
+    max-width: 1200px;
+    margin: 8rem auto 4rem;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.cart-left h2 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.cart-item {
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cart-item img {
+    width: 110px;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 1rem;
+}
+
+.cart-info h3 {
+    font-size: 1.1rem;
+    margin: 0 0 0.3rem;
+}
+
+.unit-price {
+    color: #00a650;
+    font-weight: bold;
+    margin-bottom: 0.7rem;
+}
+
+.cart-qty {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.cart-qty button {
+    width: 30px;
+    height: 30px;
+    border: none;
+    background: #eee;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.cart-right {
+    margin-left: auto;
+    text-align: right;
+}
+
+.subtotal {
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: #00a650;
+    margin-bottom: 0.4rem;
+}
+
+.remove-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #ff3b30;
+}
+
+.cart-summary {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    height: fit-content;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    margin-top: 3.8rem;
+}
+
+.cart-summary h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.2rem;
+    margin-bottom: 1.8rem;
+}
+
+/* Botones */
+
+.btn-checkout {
+    width: 100%;
+    background: #3483fa;
+    color: white;
+    padding: 1rem;
+    font-size: 1.2rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.btn-back {
+    display: block;
+    text-align: center;
+    color: #3483fa;
+    text-decoration: underline;
+}
+
+
+.cart-empty {
+    text-align: center;
+    margin-top: 10rem;
+}
+
+.btn-primary {
+    background: #3483fa;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 10px;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 1.5rem;
+}
+
+/* ---- RESPONSIVE ---- */
+
+@media (max-width: 900px) {
+    .cart-container {
+        grid-template-columns: 1fr;
+    }
+}
+

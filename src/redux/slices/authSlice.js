@@ -1,4 +1,3 @@
-// src/redux/authSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { loginUser, registerUser, logoutUser, getUser } from "../thunks/authThunks.js";
 
@@ -13,7 +12,7 @@ const initialState = {
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: {}, // no necesitamos reducers manuales ahora
+    reducers: {},
     extraReducers: (builder) => {
         builder
 
@@ -22,9 +21,10 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(loginUser.fulfilled, (state) => {
+            .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
                 state.isAuthenticated = true;
+                state.user = action.payload.user;
             })
             .addCase(loginUser.rejected, (state, action) => {
                 state.loading = false;
@@ -32,13 +32,12 @@ const authSlice = createSlice({
                 state.isAuthenticated = false;
             })
 
-            // OBTENER USER (si cookie válida)
             .addCase(getUser.pending, (state) => {
                 state.loading = true;
             })
             .addCase(getUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload;
+                state.user = action.payload.user;
                 state.isAuthenticated = true;
             })
             .addCase(getUser.rejected, (state) => {

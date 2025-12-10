@@ -55,7 +55,6 @@ const Dashboard = () => {
         <div className="dashboard-container">
             <h1>Panel de Administrador</h1>
 
-            {/* Formulario moderno */}
             <div className="form-card">
                 <h2>{editingId ? 'Editar Producto' : 'Crear Nuevo Producto'}</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
