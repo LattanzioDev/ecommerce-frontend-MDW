@@ -1,18 +1,33 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
+import {useEffect} from "react";
+import {getCart} from "../redux/thunks/cartThunks.js";
 import { ShoppingCart } from "lucide-react";
 import { logoutUser } from "../redux/thunks/authThunks.js";
+import {clearCartState} from "../redux/slices/cartSlice.js";
 
 const Header = () => {
     const { user, isAuthenticated } = useSelector((state) => state.auth);
-    const { items = [] } = useSelector((state) => state.cart || { items: [] }); // ← Protección
+    const { items = [], loading, error } = useSelector((state) => state.cart);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const totalItems = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+    useEffect(() => {
+        dispatch(getCart());
+    }, [dispatch]);
+    useEffect(() => {
+        if (user) {
+            dispatch(getCart());
+        }
+    }, [dispatch, user]); // ⬅ HACÉ QUE DEPENDA DE user
+
+    let totalItems = loading
+        ? 0
+        : items.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
     const handleLogout = () => {
         dispatch(logoutUser());
+        dispatch(clearCartState());
         navigate('/');
     };
 

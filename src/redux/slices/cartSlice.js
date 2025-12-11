@@ -1,55 +1,84 @@
-import { createSlice } from '@reduxjs/toolkit';
-
-const loadCartFromStorage = () => {
-    try {
-        const cart = localStorage.getItem('cart');
-        return cart ? JSON.parse(cart) : [];
-    } catch {
-        return [];
-    }
-};
-
-const saveCartToStorage = (cart) => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-};
+import { createSlice } from "@reduxjs/toolkit";
+import {
+    getCart,
+    addToCart,
+    updateCart,
+    removeFromCart
+} from "../thunks/cartThunks.js";
 
 const cartSlice = createSlice({
-    name: 'cart',
+    name: "cart",
     initialState: {
-        items: loadCartFromStorage(),
+        items: [],
+        loading: false,
+        error: null
     },
     reducers: {
-        addToCart: (state, action) => {
-            const product = action.payload;
-            const existing = state.items.find(item => item._id === product._id);
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                state.items.push({ ...product, quantity: 1 });
-            }
-            saveCartToStorage(state.items);
-        },
-        removeFromCart: (state, action) => {
-            state.items = state.items.filter(item => item._id !== action.payload);
-            saveCartToStorage(state.items);
-        },
-        updateQuantity: (state, action) => {
-            const { id, quantity } = action.payload;
-            const item = state.items.find(item => item._id === id);
-            if (item) {
-                item.quantity = quantity;
-                if (quantity <= 0) {
-                    state.items = state.items.filter(item => item._id !== id);
-                }
-            }
-            saveCartToStorage(state.items);
-        },
-        clearCart: (state) => {
+        clearCartState: (state) => {
             state.items = [];
-            localStorage.removeItem('cart');
-        },
+            state.loading = false;
+            state.error = null;
+        }
+    },
+    extraReducers: (builder) => {
+        builder
+
+            // 📌 Get Cart
+            .addCase(getCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(getCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload.items || action.payload;
+            })
+            .addCase(getCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // 📌 Add to Cart
+            .addCase(addToCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(addToCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload.items || action.payload;
+            })
+            .addCase(addToCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // 📌 Update Cart
+            .addCase(updateCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(updateCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload.items || action.payload;
+            })
+            .addCase(updateCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // 📌 Remove From Cart
+            .addCase(removeFromCart.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(removeFromCart.fulfilled, (state, action) => {
+                state.loading = false;
+                state.items = action.payload.items || action.payload;
+            })
+            .addCase(removeFromCart.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     },
 });
-
-export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
+export const { clearCartState } = cartSlice.actions;
 export default cartSlice.reducer;

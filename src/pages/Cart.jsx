@@ -1,14 +1,25 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { removeFromCart, updateQuantity } from '../redux/slices/cartSlice';
+import {useEffect} from "react";
+import {removeFromCart, getCart, updateCart} from "../redux/thunks/cartThunks.js";
 import { Link } from 'react-router-dom';
 import { Trash2, Plus, Minus } from "lucide-react"; // iconos modernos
 
 const Cart = () => {
-    const { items = [] } = useSelector((state) => state.cart);
     const dispatch = useDispatch();
+    const { items = [], loading, error } = useSelector((state) => state.cart);
+
+    useEffect(() => {
+        dispatch(getCart());
+    }, [dispatch]);
+
+
+    // ⬅️ Manejar errores
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
 
     const total = items
-        .reduce((sum, item) => sum + item.price * item.quantity, 0)
+        .reduce((sum, item) => sum + item.product.price * item.quantity, 0)
         .toFixed(2);
 
     if (items.length === 0) {
@@ -26,17 +37,17 @@ const Cart = () => {
                 <h2>Carrito</h2>
 
                 {items.map((item) => (
-                    <div key={item._id} className="cart-item">
-                        <img src={item.image || '/placeholder.jpg'} alt={item.name} />
+                    <div key={item.product._id} className="cart-item">
+                        <img src={item.product.image || '/placeholder.jpg'} alt={item.product.name} />
 
                         <div className="cart-info">
                             <h3>{item.name}</h3>
-                            <p className="unit-price">${item.price.toFixed(2)}</p>
+                            <p className="unit-price">${item.product.price.toFixed(2)}</p>
 
                             <div className="cart-qty">
                                 <button
                                     onClick={() =>
-                                        dispatch(updateQuantity({ id: item._id, quantity: Math.max(1, item.quantity - 1) }))
+                                        dispatch(updateCart({ id: item.product._id, quantity: Math.max(1, item.quantity - 1) }))
                                     }
                                 >
                                     <Minus size={16} />
@@ -46,7 +57,7 @@ const Cart = () => {
 
                                 <button
                                     onClick={() =>
-                                        dispatch(updateQuantity({ id: item._id, quantity: item.quantity + 1 }))
+                                        dispatch(updateCart({ id: item.product._id, quantity: item.quantity + 1 }))
                                     }
                                 >
                                     <Plus size={16} />
@@ -55,9 +66,9 @@ const Cart = () => {
                         </div>
 
                         <div className="cart-right">
-                            <p className="subtotal">${(item.price * item.quantity).toFixed(2)}</p>
+                            <p className="subtotal">${(item.product.price * item.quantity).toFixed(2)}</p>
                             <button
-                                onClick={() => dispatch(removeFromCart(item._id))}
+                                onClick={() => dispatch(removeFromCart(item.product._id))}
                                 className="remove-btn"
                             >
                                 <Trash2 size={18} />

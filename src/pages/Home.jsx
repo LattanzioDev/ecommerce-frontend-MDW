@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../redux/slices/productsSlice';
-import { addToCart } from '../redux/slices/cartSlice'; //
+import {addToCart} from "../redux/thunks/cartThunks.js";
 
 const Home = () => {
     const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Home = () => {
                             </div>
 
                             <button
-                                onClick={() => dispatch(addToCart(product))}
+                                onClick={() => dispatch(addToCart({id: product._id, quantity: 1}))}
                                 className="btn-add-to-cart"
                             >
                                 Agregar al carrito
